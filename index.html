@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>月球生存评分卡</title>
+  <style>
+    body {
+      font-family: "Microsoft YaHei", Arial, sans-serif;
+      margin: 30px;
+      background: #f9f9f9;
+    }
+    h2 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      font-size: 18px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    input.text-input {
+      font-size: 18px;
+      padding: 5px 10px;
+      margin-bottom: 15px;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+      font-size: 16px;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+    input.rank-input {
+      width: 60px;
+      font-size: 16px;
+      text-align: center;
+      padding: 4px;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+    }
+    .expert {
+      color: red;
+      font-weight: bold;
+    }
+    button {
+      margin-top: 20px;
+      font-size: 18px;
+      padding: 10px 20px;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2a63c7;
+    }
+  </style>
+</head>
+<body>
+  <h2>月球生存个人评分卡</h2>
+  
+  <label>小组编号:</label>
+  <input id="group" class="text-input"><br>
+  <label>你的姓名:</label>
+  <input id="name" class="text-input"><br>
+
+  <table>
+    <tr>
+      <th>物品</th>
+      <th>步骤1<br>个人决定<br>（讨论前）</th>
+      <th>步骤2<br>小组决定</th>
+      <th>步骤3<br>个人决定<br>(讨论后)</th>
+      <th>步骤4<br>专家排名</th>
+      <th>步骤5<br>个人影响力<br>|1-2|</th>
+      <th>步骤6<br>个人表现1<br>|1-4|</th>
+      <th>步骤7<br>团队表现<br>|2-4|</th>
+      <th>步骤8<br>个人表现2<br>|3-4|</th>
+    </tr>
+  </table>
+
+  <button onclick="calc()">计算结果</button>
+
+  <script>
+    const items = [
+      "火柴盒","浓缩食品","20米尼龙绳","降落伞绸","便携式加热装置",
+      "两把.45口径手枪","一箱脱水牛奶","两个50公斤氧气罐","星图",
+      "自充气救生筏","磁罗盘","20升水","信号弹","包括注射针的急救箱","太阳能FM收发机"
+    ];
+    // 专家排名
+    const expert = [15,4,6,8,13,11,12,1,3,9,14,2,10,7,5];
+
+    const table = document.querySelector("table");
+    items.forEach((item, i) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${item}</td>
+        <td><input id="p1-${i}" class="rank-input"></td>
+        <td><input id="p2-${i}" class="rank-input"></td>
+        <td><input id="p3-${i}" class="rank-input"></td>
+        <td id="exp-${i}" class="expert">${expert[i]}</td>
+        <td id="s5-${i}"></td>
+        <td id="s6-${i}"></td>
+        <td id="s7-${i}"></td>
+        <td id="s8-${i}"></td>
+      `;
+      table.appendChild(tr);
+    });
+
+    function calc() {
+      items.forEach((_, i) => {
+        let p1 = Number(document.getElementById(`p1-${i}`).value);
+        let p2 = Number(document.getElementById(`p2-${i}`).value);
+        let p3 = Number(document.getElementById(`p3-${i}`).value);
+        let exp = expert[i];
+
+        // 步骤5: |1 - 2|
+        document.getElementById(`s5-${i}`).innerText = Math.abs(p1 - p2);
+        // 步骤6: |1 - 4|
+        document.getElementById(`s6-${i}`).innerText = Math.abs(p1 - exp);
+        // 步骤7: |2 - 4|
+        document.getElementById(`s7-${i}`).innerText = Math.abs(p2 - exp);
+        // 步骤8: |3 - 4|
+        document.getElementById(`s8-${i}`).innerText = Math.abs(p3 - exp);
+      });
+    }
+  </script>
+</body>
+</html>
