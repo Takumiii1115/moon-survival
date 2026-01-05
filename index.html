@@ -229,17 +229,18 @@
   };
 
   fetch("https://script.google.com/macros/s/AKfycbwcHDJpfCIIduAdcN4OnhWrItrMyAsxVrA5XZErJilhR-EUC2IjAiMHiYpOXI_XH6ubKQ/exec", {
-    method: "POST",
-    body: JSON.stringify(payload)
-  })
-    .then(response => response.json())
-    .then(() => {
-      alert("提交成功！老师已经收到你的结果 😊");
-    })
-    .catch(error => {
-      alert("提交失败，请检查网络");
-      console.error(error);
-    });
+  method: "POST",
+  body: JSON.stringify(payload),
+  mode: "no-cors"
+})
+.then(() => {
+  alert("提交成功！老师已经收到你的结果 😊");
+})
+.catch(error => {
+  alert("提交失败，请检查网络");
+  console.error(error);
+});
+
 }
 
   </script>
