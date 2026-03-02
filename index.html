@@ -17,7 +17,7 @@
     .hint {
       text-align: center;
       font-size: 16px;
-      color: #d9534f; /* 红色提示 */
+      color: #d9534f;
       margin-bottom: 20px;
       font-weight: bold;
     }
@@ -77,7 +77,7 @@
       background-color: #2a63c7;
     }
     .sum-cell {
-      background: #fff8b3; /* 黄色底 */
+      background: #fff8b3;
       font-weight: bold;
     }
     .note-cell {
@@ -85,7 +85,6 @@
       font-style: bold;
       padding-left: 10px;
     }
-    /* 默认隐藏 Step4-8 */
     .hidden-col {
       display: none;
     }
@@ -93,7 +92,7 @@
 </head>
 <body>
   <h2>月球生存个人评分卡</h2>
-  <div id="hint" class="hint">👉 请先完成步骤1–3的输入，再点击“计算结果”按钮</div>
+  <div id="hint" class="hint">👉 请先完成步骤1–3的输入，再点击"计算结果"按钮</div>
   
   <label>小组编号:</label>
   <input id="group" class="text-input"><br>
@@ -117,14 +116,12 @@
   <button onclick="calc()">计算结果</button>
   <button onclick="submitData()">提交结果</button>
 
-
   <script>
     const items = [
       "火柴盒","浓缩食品","20米尼龙绳","降落伞绸","便携式加热装置",
       "两把.45口径手枪","一箱脱水牛奶","两个50公斤氧气罐","星图",
       "自充气救生筏","磁罗盘","20升水","信号弹","包括注射针的急救箱","太阳能FM收发机"
     ];
-    // 专家排名
     const expert = [15,4,6,8,13,11,12,1,3,9,14,2,10,7,5];
 
     const table = document.getElementById("score-table");
@@ -144,7 +141,6 @@
       table.appendChild(tr);
     });
 
-    // 添加总和 + 注释 行 (隐藏)
     const sumRow = document.createElement("tr");
     sumRow.classList.add("hidden-col");
     sumRow.id = "sum-row";
@@ -182,67 +178,73 @@
         total8 += v8;
       });
 
-      // 更新总和
       document.getElementById("sum5").innerText = total5;
       document.getElementById("sum6").innerText = total6;
       document.getElementById("sum7").innerText = total7;
       document.getElementById("sum8").innerText = total8;
 
-      // 显示 Step4-8
       document.querySelectorAll(".hidden-col").forEach(el => {
         el.style.display = "table-cell";
       });
       document.getElementById("sum-row").style.display = "table-row";
-
-      // 隐藏提示
       document.getElementById("hint").style.display = "none";
     }
+
     function submitData() {
-  const group = document.getElementById("group").value.trim();
-  const name = document.getElementById("name").value.trim();
+      const group = document.getElementById("group").value.trim();
+      const name = document.getElementById("name").value.trim();
 
-  if (!group || !name) {
-    alert("请填写小组编号和姓名");
-    return;
-  }
+      if (!group || !name) {
+        alert("请填写小组编号和姓名");
+        return;
+      }
 
-  const answers = [];
+      const rawData = [];
+      items.forEach((item, i) => {
+        rawData.push({
+          item: item,
+          step1: document.getElementById(`p1-${i}`).value,
+          step2: document.getElementById(`p2-${i}`).value,
+          step3: document.getElementById(`p3-${i}`).value
+        });
+      });
 
-  items.forEach((item, i) => {
-    answers.push({
-      item: item,
-      step1: document.getElementById(`p1-${i}`).value,
-      step2: document.getElementById(`p2-${i}`).value,
-      step3: document.getElementById(`p3-${i}`).value,
-      expert: expert[i]
-    });
-  });
+      const calculatedData = [];
+      items.forEach((item, i) => {
+        calculatedData.push({
+          item: item,
+          expert: expert[i],
+          step5: document.getElementById(`s5-${i}`).innerText,
+          step6: document.getElementById(`s6-${i}`).innerText,
+          step7: document.getElementById(`s7-${i}`).innerText,
+          step8: document.getElementById(`s8-${i}`).innerText
+        });
+      });
 
-  const payload = {
-    group: group,
-    name: name,
-    answers: answers,
-    sum5: document.getElementById("sum5").innerText,
-    sum6: document.getElementById("sum6").innerText,
-    sum7: document.getElementById("sum7").innerText,
-    sum8: document.getElementById("sum8").innerText
-  };
+      const payload = {
+        group: group,
+        name: name,
+        rawData: rawData,
+        calculatedData: calculatedData,
+        sum5: document.getElementById("sum5").innerText,
+        sum6: document.getElementById("sum6").innerText,
+        sum7: document.getElementById("sum7").innerText,
+        sum8: document.getElementById("sum8").innerText
+      };
 
-  fetch("https://script.google.com/macros/s/AKfycbwcHDJpfCIIduAdcN4OnhWrItrMyAsxVrA5XZErJilhR-EUC2IjAiMHiYpOXI_XH6ubKQ/exec", {
-  method: "POST",
-  body: JSON.stringify(payload),
-  mode: "no-cors"
-})
-.then(() => {
-  alert("提交成功！老师已经收到你的结果 😊");
-})
-.catch(error => {
-  alert("提交失败，请检查网络");
-  console.error(error);
-});
-
-}
-
+      fetch("https://script.google.com/macros/s/AKfycbwcHDJpfCIIduAdcN4OnhWrItrMyAsxVrA5XZErJilhR-EUC2IjAiMHiYpOXI_XH6ubKQ/exec", {
+        method: "POST",
+        body: JSON.stringify(payload),
+        mode: "no-cors"
+      })
+      .then(() => {
+        alert("提交成功！老师已经收到你的结果 😊");
+      })
+      .catch(error => {
+        alert("提交失败，请检查网络");
+        console.error(error);
+      });
+    }
   </script>
 </body>
 </html>
